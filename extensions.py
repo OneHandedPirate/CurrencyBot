@@ -18,7 +18,7 @@ class Exchange:
         for i, v in r.items():
             if i in keys.values():
                 rates.append(str(round(1/v, 2)) + 'р.')
-        text = f'Вот курсы доступных валют в рублях на {date}:\n\n'
+        text = f'Вот курсы доступных валют к рублю на {date}:\n\n'
         for i, v in dict(zip(keys.keys(), rates)).items():
             text += f'{i} {v}\n'
 

@@ -1,5 +1,5 @@
 import telebot
-from config import BOT_TOKEN
+from config import BOT_TOKEN, keys
 from keyboard import markup
 from extensions import Exchange, APIException
 
@@ -10,12 +10,14 @@ bot = telebot.TeleBot(BOT_TOKEN)
 def welcome(message):
     wel = 'Для работы с ботом введите команду вида:\n<имя валюты> <в какую валюту перевести> <количество переводимой валюты>' \
           ' \nЧтобы узнать доступные валюты и их курсы к рублю нажмите кнопку' \
-          ' "Курсы доступных валют" или введите /value'
+          ' "Курсы доступных валют".\nВведите для отображения списка валют, доступных для конвертации /value'
     bot.reply_to(message, wel, reply_markup=markup)
 
 @bot.message_handler(commands=['value'])
-def val(message):
-    bot.send_message(message.chat.id, Exchange.get_dayly_rates())
+def value(message):
+    val = 'Валюты, доступные для конвертации:\n\n'
+    val += '\n'.join([i for i in keys.keys()])
+    bot.send_message(message.chat.id, val)
 
 @bot.message_handler()
 def handl(message):
