@@ -7,7 +7,6 @@ class APIException(Exception):
     pass
 
 
-
 class Exchange:
     @staticmethod
     def get_dayly_rates():

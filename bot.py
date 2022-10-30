@@ -6,7 +6,6 @@ from extensions import Exchange, APIException
 
 bot = telebot.TeleBot(BOT_TOKEN)
 
-
 @bot.message_handler(commands=['start', 'help'])
 def welcome(message):
     wel = 'Для работы с ботом введите команду вида:\n<имя валюты> <в какую валюту перевести> <количество переводимой валюты>' \
