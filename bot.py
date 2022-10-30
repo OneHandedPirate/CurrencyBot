@@ -1,7 +1,8 @@
 import telebot
-from config import BOT_TOKEN, keys
+from config import keys
 from keyboard import markup
 from extensions import Exchange, APIException
+from botToken import BOT_TOKEN
 
 
 bot = telebot.TeleBot(BOT_TOKEN)
