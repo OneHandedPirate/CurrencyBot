@@ -1,27 +1,12 @@
 import requests
 import json
-from config import keys, EXCHANGE_TOKEN
+from config import keys
 
 
 class APIException(Exception):
     pass
 
-class Request:
-    @staticmethod
-    def dayly(token, k):
-        currencies = '%2C'.join(k.values())
 
-        url = f"https://api.apilayer.com/fixer/latest?symbols={currencies}&base=RUB"
-
-        payload = {}
-        headers = {
-            "apikey": token
-        }
-
-        response = requests.request("GET", url, headers=headers, data=payload)
-
-        status_code = response.status_code
-        result = response.text
 
 class Exchange:
     @staticmethod
