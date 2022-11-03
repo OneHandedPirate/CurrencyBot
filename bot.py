@@ -1,37 +1,48 @@
 import telebot
-from config import keys
-from keyboard import markup
-from extensions import Exchange, APIException
+import logging
+import asyncio
+from config import keys, WELCOME
+from extensions import Exchange, Kbds, News, APIException
 from botToken import BOT_TOKEN
+from telebot.async_telebot import AsyncTeleBot
 
 
-bot = telebot.TeleBot(BOT_TOKEN)
+bot = AsyncTeleBot(BOT_TOKEN)   #выбрал асинхронную реализацию бота, с парсингом новостей она работает быстрее.
+logger = telebot.logger.setLevel(logging.DEBUG)
 
 @bot.message_handler(commands=['start', 'help'])
-def welcome(message):
-    wel = 'Для работы с ботом введите команду вида:\n<имя валюты> <в какую валюту перевести> <количество переводимой валюты>' \
-          ' \nЧтобы узнать доступные валюты и их курсы к рублю нажмите кнопку' \
-          ' "Курсы доступных валют".\nВведите для отображения списка валют, доступных для конвертации /value'
-    bot.reply_to(message, wel, reply_markup=markup)
+async def welcome(message):
+    await bot.reply_to(message, WELCOME, reply_markup=Kbds.get_replykbd())
 
 @bot.message_handler(commands=['value'])
-def value(message):
+async def value(message):
     val = 'Валюты, доступные для конвертации:\n\n'
     val += '\n'.join([i for i in keys.keys()])
-    bot.send_message(message.chat.id, val)
+    await bot.send_message(message.chat.id, val)
 
-@bot.message_handler()
-def handl(message):
+
+@bot.message_handler(content_types=['text'])
+async def handl(message):
     if message.text == '📈 Курсы доступных валют':
-        bot.send_message(message.chat.id, Exchange.get_dayly_rates())
+        await bot.send_message(message.chat.id, Exchange.get_dayly_rates(), parse_mode='HTML')
+    elif message.text == '📰 Новости валютных рынков':
+        await News.get_news(bot, message)
     else:
         try:
-            bot.reply_to(message, Exchange.get_price(message.text))
+            await bot.reply_to(message, Exchange.get_price(message.text))
         except APIException as e:
-            bot.reply_to(message, f'Ошибка ввода!\n{e}')
+            await bot.reply_to(message, f'⛔ Ошибка ввода!\n\n{e}')
         except Exception as e:
-            bot.reply_to(message, f'Не удалось обработать команду\n{e}')
+            await bot.reply_to(message, f'⛔ Не удалось обработать команду\n{e}')
+
+@bot.callback_query_handler(func=lambda call: True)
+async def callback(call):
+    if call.data == 'back':
+        await News.back(bot, call)
+    else:
+        await News.get_text(bot, call)
 
 
 if __name__ == '__main__':
-    bot.infinity_polling()
+    asyncio.run(bot.infinity_polling())
+
