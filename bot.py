@@ -1,5 +1,3 @@
-import telebot
-import logging
 import asyncio
 from config import keys, WELCOME
 from extensions import Exchange, Kbds, News, APIException
@@ -8,7 +6,6 @@ from telebot.async_telebot import AsyncTeleBot
 
 
 bot = AsyncTeleBot(BOT_TOKEN)   #выбрал асинхронную реализацию бота, с парсингом новостей она работает быстрее.
-logger = telebot.logger.setLevel(logging.DEBUG)
 
 @bot.message_handler(commands=['start', 'help'])
 async def welcome(message):
