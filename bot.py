@@ -44,5 +44,5 @@ async def callback(call):
 
 
 if __name__ == '__main__':
-    asyncio.run(bot.infinity_polling())
+    asyncio.run(bot.polling())
 
