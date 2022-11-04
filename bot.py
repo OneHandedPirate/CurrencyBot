@@ -26,7 +26,7 @@ async def handl(message):
     if message.text == '📈 Курсы доступных валют':
         await bot.send_message(message.chat.id, Exchange.get_dayly_rates())
     elif message.text == '📰 Новости валютных рынков':
-        await News.get_news(bot, message)
+        await News.get_news(bot, message=message)
     else:
         try:
             await bot.reply_to(message, Exchange.get_price(message.text))
@@ -38,7 +38,7 @@ async def handl(message):
 @bot.callback_query_handler(func=lambda call: True)
 async def callback(call):
     if call.data == 'back':
-        await News.back(bot, call)
+        await News.get_news(bot, call=call)
     else:
         await News.get_text(bot, call)
 

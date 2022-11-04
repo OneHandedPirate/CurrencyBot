@@ -23,7 +23,7 @@ class Exchange:
                     rates.append(str(round(1 / v, 2)) + 'р.')
         text = f'<b>Вот курсы доступных валют (ЦБ) к рублю на {date}:</b>\n\n'
         for v, i in dict(zip(rates, keys.values())).items():
-            #форматирование ввиде только для того, чтобы выровнять колонку с ценами валют.
+            #форматирование в виде применяется только для того, чтобы выровнять колонку с ценами валют.
             text += f"<code>{i[2] + ' ' * (22 - len(i[2]))}</code>{v}\n"
         return text.strip('\n')
 
@@ -82,7 +82,7 @@ class Kbds:
 
 class News:
     @staticmethod
-    def get_news(bot, message):
+    def get_news(bot, message=None, call=None):
         response = requests.get('https://1prime.ru/Forex/', HEADERS).text
         bs = BeautifulSoup(response, 'lxml')
         main = bs.find('div', class_='rubric-list__articles').find_all('article', class_='rubric-list__article')
@@ -112,7 +112,11 @@ class News:
             btns.append(types.InlineKeyboardButton(f'{num}', callback_data=f'{url}'))
         inline_markup.add(*btns)
 
-        return bot.send_message(message.chat.id, result, reply_markup=inline_markup)
+        if message:
+            return bot.send_message(message.chat.id, result, reply_markup=inline_markup)
+        elif call:
+            return bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.id,
+                                         text=result, reply_markup=inline_markup)
 
     @staticmethod
     def get_text(bot, call):
@@ -131,36 +135,4 @@ class News:
         return bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.id,
                                      text=text, reply_markup=Kbds.get_back_btn())
 
-    @staticmethod
-    def back(bot, call):  # очень топорная реализация кнопки "назад", но лучше я пока ничего не придумал(
-        response = requests.get('https://1prime.ru/Forex/', HEADERS).text
-        bs = BeautifulSoup(response, 'lxml')
-        main = bs.find('div', class_='rubric-list__articles').find_all('article', class_='rubric-list__article')
-        latestdate = main[0].find('time').get('datetime')[:10]
-        latestnews = []
-        for a in main:
-            if a.find('time').get('datetime')[:10] == latestdate:
-                latestnews.append(a)
-        result = f'⚡ <b>Новости на {".".join(latestdate.split("-")[::-1])}:</b> ⚡\n\n'
 
-        count = 0
-        urls_list = []
-
-        for i in latestnews:
-            count += 1
-            temp = i.find_all('a')[1]
-            url = 'https://1prime.ru/' + temp.get('href')
-            urls_list.append(url)
-            title = temp.getText()
-            result += f'{count})  {title}.\n'
-
-        inline_markup = types.InlineKeyboardMarkup(row_width=5)
-        num = 0
-        btns = []
-        for url in urls_list:
-            num += 1
-            btns.append(types.InlineKeyboardButton(f'{num}', callback_data=f'{url}'))
-        inline_markup.add(*btns)
-
-        return bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.id,
-                                     text=result, reply_markup=inline_markup)
