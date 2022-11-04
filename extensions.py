@@ -16,7 +16,6 @@ class Exchange:
         js = (json.loads(response))
         date = '.'.join(js['date'].split('-')[::-1])
         r = js['rates']
-        print(r)
         rates = []
         for i, v in r.items():
             for cur in keys.values():
