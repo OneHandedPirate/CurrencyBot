@@ -1,3 +1,5 @@
+import telebot
+import logging
 import asyncio
 from config import keys, WELCOME
 from extensions import Exchange, Kbds, News, APIException
@@ -5,23 +7,24 @@ from botToken import BOT_TOKEN
 from telebot.async_telebot import AsyncTeleBot
 
 
-bot = AsyncTeleBot(BOT_TOKEN)   #выбрал асинхронную реализацию бота, с парсингом новостей она работает быстрее.
+bot = AsyncTeleBot(BOT_TOKEN, disable_web_page_preview=True, parse_mode='HTML')   #выбрал асинхронную реализацию бота, с парсингом новостей она работает быстрее.
+logger = telebot.logger.setLevel(logging.DEBUG)
 
 @bot.message_handler(commands=['start', 'help'])
 async def welcome(message):
-    await bot.reply_to(message, WELCOME, reply_markup=Kbds.get_replykbd())
+    await bot.reply_to(message, WELCOME, reply_markup=Kbds.get_replykbd(), parse_mode=None)
 
 @bot.message_handler(commands=['value'])
 async def value(message):
-    val = 'Валюты, доступные для конвертации:\n\n'
-    val += '\n'.join([i for i in keys.keys()])
+    val = '🔄 Валюты, доступные для конвертации и их ключи:\n'
+    for key, lst in keys.items():
+        val += f'\n{lst[2]}   ➡   {key}'
     await bot.send_message(message.chat.id, val)
-
 
 @bot.message_handler(content_types=['text'])
 async def handl(message):
     if message.text == '📈 Курсы доступных валют':
-        await bot.send_message(message.chat.id, Exchange.get_dayly_rates(), parse_mode='HTML')
+        await bot.send_message(message.chat.id, Exchange.get_dayly_rates())
     elif message.text == '📰 Новости валютных рынков':
         await News.get_news(bot, message)
     else:
@@ -41,5 +44,4 @@ async def callback(call):
 
 
 if __name__ == '__main__':
-    asyncio.run(bot.polling())
-
+    asyncio.run(bot.infinity_polling())
