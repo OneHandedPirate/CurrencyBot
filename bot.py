@@ -7,7 +7,7 @@ from botToken import BOT_TOKEN
 from telebot.async_telebot import AsyncTeleBot
 
 
-bot = AsyncTeleBot(BOT_TOKEN, disable_web_page_preview=True, parse_mode='HTML')   #выбрал асинхронную реализацию бота, с парсингом новостей она работает быстрее.
+bot = AsyncTeleBot(BOT_TOKEN, disable_web_page_preview=True, parse_mode='HTML')
 logger = telebot.logger.setLevel(logging.DEBUG)
 
 @bot.message_handler(commands=['start', 'help'])
