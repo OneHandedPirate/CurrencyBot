@@ -1,6 +1,6 @@
-import telebot
-import logging
 import asyncio
+import logging
+import telebot
 from config import keys, WELCOME
 from extensions import Exchange, Kbds, News, APIException
 from botToken import BOT_TOKEN
