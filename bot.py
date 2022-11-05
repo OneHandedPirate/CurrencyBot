@@ -13,7 +13,7 @@ logger = telebot.logger.setLevel(logging.DEBUG)
 async def welcome(message):
     await bot.reply_to(message, WELCOME, reply_markup=Kbds.get_replykbd(), parse_mode=None)
 
-@bot.message_handler(commands=['value'])
+@bot.message_handler(commands=['values'])
 async def value(message):
     val = '🔄 Валюты, доступные для конвертации и их ключи:\n'
     for key, lst in keys.items():
