@@ -1,5 +1,5 @@
-import requests
 import json
+import requests
 from bs4 import BeautifulSoup
 from config import keys, HEADERS
 from telebot import types
@@ -10,6 +10,7 @@ class APIException(Exception):
 
 
 class Exchange:
+    # Получаем актуальные курсы валют, указанных в keys.
     @staticmethod
     def get_dayly_rates():
         response = requests.get('https://www.cbr-xml-daily.ru/latest.js').text
@@ -27,6 +28,7 @@ class Exchange:
             text += f"<code>{i[2] + ' ' * (22 - len(i[2]))}</code>{v}\n"
         return text.strip('\n')
 
+    #Конвертор валют
     @staticmethod
     def get_price(message):
         response = requests.get('https://www.cbr-xml-daily.ru/latest.js').text
@@ -66,6 +68,7 @@ class Exchange:
         return result  # В выводе вместо вводимых пользователем ключей валют я использовал соответствующие им unicode-символы чтобы избежать путаницы с окончаниями
 
 
+#Класс кнопок
 class Kbds:
     @staticmethod
     def get_back_btn():
@@ -81,6 +84,9 @@ class Kbds:
 
 
 class News:
+    # Получаем список новостей, ссылок на их тексты и кнопки и ограничиваем его последней датой.
+    # Можно было бы ограничить список определенным количеством (10-15,например),
+    # чтобы избежать ситуации когда обновляется дата и показывается только одна новость, но я решил оставить так.
     @staticmethod
     def get_news(bot, message=None, call=None):
         response = requests.get('https://1prime.ru/Forex/', HEADERS).text
@@ -118,6 +124,7 @@ class News:
             return bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.id,
                                          text=result, reply_markup=inline_markup)
 
+    # Получаем текст новости, распарсив страницу которая передается в callback_data.
     @staticmethod
     def get_text(bot, call):
         response = requests.get(call.data, HEADERS).text
@@ -132,6 +139,12 @@ class News:
             else:
                 text += f'      {p.get_text()}\n'
         text += f'\n👉 <a href="{call.data}">Источник</a>'
+        # Если текст слишком длинный для 1 сообщения - обрезаем его и отправляем
+        # пользователя читать источник. Это бывает крайне редко.
+        if len(text) > 4000:
+            text = text[:4000]
+            text += f'...  \n<a href="{call.data}">Продолжение в источнике</a>'
+
         return bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.id,
                                      text=text, reply_markup=Kbds.get_back_btn())
 
