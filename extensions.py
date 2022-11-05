@@ -137,12 +137,12 @@ class News:
                 text += f'\n      {p.get_text()}\n\n'
             else:
                 text += f'      {p.get_text()}\n'
-        text += f'\n👉 <a href="{call.data}">Источник</a>'
+        text += f'\n👉  <a href="{call.data}">Источник</a>'
         # Если текст слишком длинный для 1 сообщения - обрезаем его и отправляем
         # пользователя читать источник. Это бывает крайне редко.
         if len(text) > 4000:
             text = text[:4000]
-            text += f'...  \n<a href="{call.data}">Продолжение в источнике</a>'
+            text += f'...  \n\n👉  <a href="{call.data}"> Продолжение в источнике</a>'
 
         return bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.id,
                                      text=text, reply_markup=Kbds.get_back_btn())
