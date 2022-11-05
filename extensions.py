@@ -53,7 +53,6 @@ class Exchange:
         if quote not in keys or base not in keys:
             raise APIException(f'❗Не удалось обработать ключ '
                                f'валюты {"№1" if base not in keys else "№2"}❗')
-
         try:
             amount = float(amount)
         except ValueError:

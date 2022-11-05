@@ -6,7 +6,6 @@ from extensions import Exchange, Kbds, News, APIException
 from botToken import BOT_TOKEN
 from telebot.async_telebot import AsyncTeleBot
 
-
 bot = AsyncTeleBot(BOT_TOKEN, disable_web_page_preview=True, parse_mode='HTML')
 logger = telebot.logger.setLevel(logging.DEBUG)
 
