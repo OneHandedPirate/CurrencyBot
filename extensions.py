@@ -96,7 +96,7 @@ class News:
         for a in main:
             if a.find('time').get('datetime')[:10] == latestdate:
                 latestnews.append(a)
-        result = f'⚡ <b>Новости на {".".join(latestdate.split("-")[::-1])}:</b> ⚡\n\n'
+        result = f'⚡ <b>Новости на {".".join(latestdate.split("-")[::-1])}</b> ⚡\n\n'
 
         count = 0
         urls_list = []
@@ -106,7 +106,7 @@ class News:
             temp = i.find_all('a')[1]
             url = 'https://1prime.ru/' + temp.get('href')
             urls_list.append(url)
-            title = temp.getText()
+            title = (temp.getText() if temp.getText() else '❗Не удалось обработать заголовок')
             result += f'{count})  {title}.\n'
 
         inline_markup = types.InlineKeyboardMarkup(row_width=5)
