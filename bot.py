@@ -1,13 +1,10 @@
 import asyncio
-import logging
-import telebot
 from config import keys, WELCOME
 from extensions import Exchange, Kbds, News, APIException
 from botToken import BOT_TOKEN
 from telebot.async_telebot import AsyncTeleBot
 
-bot = AsyncTeleBot(BOT_TOKEN, disable_web_page_preview=True, parse_mode='HTML')
-logger = telebot.logger.setLevel(logging.DEBUG)
+bot = AsyncTeleBot(BOT_TOKEN, parse_mode='HTML')
 
 @bot.message_handler(commands=['start', 'help'])
 async def welcome(message):

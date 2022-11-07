@@ -145,4 +145,5 @@ class News:
             text += f'...  \n\n👉  <a href="{call.data}"> Продолжение в источнике</a>'
 
         return bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.id,
-                                     text=text, reply_markup=Kbds.get_back_btn())
+                                     text=text, reply_markup=Kbds.get_back_btn(),
+                                     disable_web_page_preview=True)
