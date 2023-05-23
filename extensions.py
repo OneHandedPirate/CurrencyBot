@@ -83,14 +83,19 @@ class Kbds:
 
 
 class News:
-    # Получаем список новостей, ссылок на их тексты и кнопки и ограничиваем его последней датой.
-    # Можно было бы ограничить список определенным количеством (10-15,например),
-    # чтобы избежать ситуации когда обновляется дата и показывается только одна новость, но я решил оставить так.
+    """
+    Получаем список новостей, ссылок на их тексты и кнопки и ограничиваем его
+    последней датой. Можно было бы ограничить список определенным количеством
+    (10-15,например), чтобы избежать ситуации когда обновляется дата и
+    показывается только одна новость, но я решил оставить так.
+    """
+
     @staticmethod
     def get_news(bot, message=None, call=None):
         response = requests.get('https://1prime.ru/Forex/', HEADERS).text
         bs = BeautifulSoup(response, 'lxml')
-        main = bs.find('div', class_='rubric-list__articles').find_all('article', class_='rubric-list__article')
+        main = bs.find('div', class_='rubric-list__articles')\
+            .find_all('article', class_='rubric-list__article')
         latestdate = main[0].find('time').get('datetime')[:10]
         latestnews = []
         for a in main:
@@ -123,7 +128,6 @@ class News:
             return bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.id,
                                          text=result, reply_markup=inline_markup)
 
-    # Получаем текст новости, распарсив страницу которая передается в callback_data.
     @staticmethod
     def get_text(bot, call):
         response = requests.get(call.data, HEADERS).text

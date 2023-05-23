@@ -8,7 +8,8 @@ bot = AsyncTeleBot(BOT_TOKEN, parse_mode='HTML')
 
 @bot.message_handler(commands=['start', 'help'])
 async def welcome(message):
-    await bot.reply_to(message, WELCOME, reply_markup=Kbds.get_replykbd(), parse_mode=None)
+    await bot.reply_to(message, WELCOME, reply_markup=Kbds.get_replykbd(),
+                       parse_mode=None)
 
 @bot.message_handler(commands=['values'])
 async def value(message):
